@@ -92,7 +92,11 @@ async function callLLM(prompt) {
     throw new Error(`LLM API returned ${res.status}: ${text}`);
   }
   const data = await res.json();
-  return data.content[0].text;
+  const content = data?.content;
+  if (!content || content.length === 0) {
+    throw new Error("LLM returned empty content array (possible safety refusal)");
+  }
+  return content[0].text;
 }
 
 // ─── Main ────────────────────────────────────────────────────
@@ -173,9 +177,15 @@ ${resultsText}`;
   let parsed;
   try {
     const raw = await callLLM(prompt);
-    // Extract JSON array from response
-    const match = raw.match(/\[[\s\S]*\]/);
-    parsed = JSON.parse(match ? match[0] : raw);
+    // Extract first complete JSON array from response (non-greedy)
+    const match = raw.match(/\[[\s\S]*?\]\s*$/m);
+    if (!match) {
+      // Fallback: try to find any JSON array
+      const greedyMatch = raw.match(/\[[\s\S]*\]/);
+      parsed = JSON.parse(greedyMatch ? greedyMatch[0] : raw);
+    } else {
+      parsed = JSON.parse(match[0].trimEnd());
+    }
     console.log(`  LLM returned ${parsed.length} entries`);
   } catch (e) {
     console.error("  LLM error:", e.message);
@@ -222,6 +232,8 @@ ${entry.sources.map((s) => `- [${s.name}](${s.url})`).join("\n")}
   // 4. Git commit & push (runs from repo root)
   console.log("  Committing and pushing...");
   try {
+    execSync('git config user.name "AI Daily Hub Bot"', { cwd: REPO_ROOT });
+    execSync('git config user.email "bot@ai-daily-hub.dev"', { cwd: REPO_ROOT });
     execSync("git add src/content/", { cwd: REPO_ROOT });
     execSync(`git commit -m "content: daily update ${date}"`, {
       cwd: REPO_ROOT,
