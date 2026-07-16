@@ -1,0 +1,20 @@
+---
+export interface Props {
+  category: "ai-news" | "ai-film" | "tech";
+}
+
+const categoryMeta = {
+  "ai-news": { label: "AI事件", color: "var(--color-cat-ai)" },
+  "ai-film": { label: "AI+影视", color: "var(--color-cat-film)" },
+  "tech": { label: "科技", color: "var(--color-cat-tech)" },
+};
+
+const { label, color } = categoryMeta[Astro.props.category];
+---
+
+<span
+  class="inline-block px-2 py-0.5 text-xs font-medium rounded-full"
+  style={`background-color: ${color}22; color: ${color}; border: 1px solid ${color}44`}
+>
+  {label}
+</span>

@@ -1,0 +1,32 @@
+---
+const links = [
+  { href: "/", label: "首页" },
+  { href: "/ai-news", label: "AI事件" },
+  { href: "/ai-film", label: "AI+影视" },
+  { href: "/tech", label: "科技" },
+  { href: "/archive", label: "往期归档" },
+];
+const currentPath = Astro.url.pathname;
+---
+
+<nav class="sticky top-0 z-50 backdrop-blur-md border-b border-white/10" style="background-color: rgba(15, 15, 15, 0.85);">
+  <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
+    <a href="/" class="text-lg font-bold bg-gradient-to-r from-[var(--color-accent-start)] to-[var(--color-accent-end)] bg-clip-text text-transparent">
+      AI Daily Hub
+    </a>
+    <div class="flex gap-1">
+      {links.map((link) => (
+        <a
+          href={link.href}
+          class={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+            currentPath === link.href
+              ? "bg-white/10 text-white"
+              : "text-[var(--color-text-dim)] hover:text-white hover:bg-white/5"
+          }`}
+        >
+          {link.label}
+        </a>
+      ))}
+    </div>
+  </div>
+</nav>

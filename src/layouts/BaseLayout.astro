@@ -1,0 +1,32 @@
+---
+import Nav from "../components/Nav.astro";
+
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "AI Daily Hub — 每日AI与科技新闻聚合" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} | AI Daily Hub</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body class="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
+    <Nav />
+    <main class="max-w-5xl mx-auto px-4 py-8">
+      <slot />
+    </main>
+    <footer class="border-t border-white/10 py-6 mt-12">
+      <div class="max-w-5xl mx-auto px-4 text-center text-sm text-[var(--color-text-dim)]">
+        <p>AI Daily Hub — 每日自动聚合 AI 与科技要闻</p>
+      </div>
+    </footer>
+  </body>
+</html>
