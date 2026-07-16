@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0f0f0f;
+  --color-surface: #1e1e1e;
+  --color-text: #e0e0e0;
+  --color-text-dim: #888888;
+  --color-accent-start: #00d4aa;
+  --color-accent-end: #00a8ff;
+  --color-cat-ai: #7c5ce7;
+  --color-cat-film: #f59e0b;
+  --color-cat-tech: #00d4aa;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+}
