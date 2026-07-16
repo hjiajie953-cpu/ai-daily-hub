@@ -1,0 +1,31 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import NewsCard from "../components/NewsCard.astro";
+
+const posts = await getCollection("news", ({ data }) => data.category === "ai-news");
+const grouped = new Map<string, typeof posts>();
+for (const post of posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())) {
+  const key = post.data.date.toISOString().split("T")[0];
+  if (!grouped.has(key)) grouped.set(key, []);
+  grouped.get(key)!.push(post);
+}
+---
+
+<BaseLayout title="AI事件" description="每日AI大模型、行业动态、政策监管">
+  <h1 class="text-3xl font-bold mb-2">🤖 AI事件</h1>
+  <p class="text-[var(--color-text-dim)] mb-8">AI大模型发布、行业动态、政策监管</p>
+
+  {[...grouped.entries()].map(([date, dayPosts]) => (
+    <section class="mb-10">
+      <h2 class="text-lg font-bold mb-4 text-[var(--color-cat-ai)] border-l-4 border-[var(--color-cat-ai)] pl-3" id={date}>
+        {date}
+      </h2>
+      <div class="space-y-3">
+        {dayPosts.sort((a, b) => a.data.rank - b.data.rank).map((post) => (
+          <NewsCard post={post} />
+        ))}
+      </div>
+    </section>
+  ))}
+</BaseLayout>
