@@ -1,0 +1,30 @@
+name: Daily Content Generation
+
+on:
+  schedule:
+    # 00:00 UTC = 08:00 CST
+    - cron: "0 0 * * *"
+  workflow_dispatch:  # allows manual trigger from GitHub UI
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Generate daily content
+        run: pnpm generate
+        env:
+          SEARCH_API_KEY: ${{ secrets.SEARCH_API_KEY }}
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
