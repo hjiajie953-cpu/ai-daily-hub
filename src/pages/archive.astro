@@ -1,0 +1,35 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Calendar from "../components/Calendar.astro";
+import NewsCard from "../components/NewsCard.astro";
+
+const allPosts = await getCollection("news");
+const postMap = new Map<string, typeof allPosts>();
+for (const post of allPosts) {
+  const key = post.data.date.toISOString().split("T")[0];
+  if (!postMap.has(key)) postMap.set(key, []);
+  postMap.get(key)!.push(post);
+}
+const dates = [...postMap.keys()].sort().reverse();
+---
+
+<BaseLayout title="往期归档" description="AI Daily Hub — 往期内容归档">
+  <h1 class="text-3xl font-bold mb-2">📅 往期归档</h1>
+  <p class="text-[var(--color-text-dim)] mb-8">按日期浏览历史内容</p>
+
+  <Calendar posts={allPosts} />
+
+  <div class="mt-12 space-y-10">
+    {dates.map((date) => (
+      <section id={date}>
+        <h2 class="text-lg font-bold mb-4 border-l-4 border-[var(--color-accent-start)] pl-3">{date}</h2>
+        <div class="space-y-3">
+          {postMap.get(date)!.sort((a, b) => a.data.rank - b.data.rank).map((post) => (
+            <NewsCard post={post} />
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+</BaseLayout>
