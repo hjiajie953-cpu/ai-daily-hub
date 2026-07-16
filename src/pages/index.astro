@@ -1,0 +1,27 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import HeroCards from "../components/HeroCards.astro";
+import Timeline from "../components/Timeline.astro";
+
+const allPosts = await getCollection("news");
+const today = new Date().toISOString().split("T")[0];
+const todayPosts = allPosts.filter(
+  (p) => p.data.date.toISOString().split("T")[0] === today
+);
+---
+
+<BaseLayout title="首页" description="AI Daily Hub — 每日AI与科技新闻聚合">
+  {todayPosts.length > 0 ? (
+    <>
+      <HeroCards posts={todayPosts} />
+      <Timeline posts={todayPosts} />
+    </>
+  ) : (
+    <div class="text-center py-20">
+      <h2 class="text-2xl font-bold mb-4">今日内容正在生成中...</h2>
+      <p class="text-[var(--color-text-dim)]">每天上午 8:00 自动更新，请稍后再来。</p>
+      <p class="text-[var(--color-text-dim)] mt-2">也可以先浏览 <a href="/archive" class="text-[var(--color-accent-start)] underline">往期内容</a></p>
+    </div>
+  )}
+</BaseLayout>

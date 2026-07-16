@@ -1,0 +1,20 @@
+---
+import NewsCard from "./NewsCard.astro";
+import type { CollectionEntry } from "astro:content";
+
+export interface Props {
+  posts: CollectionEntry<"news">[];
+}
+
+const { posts } = Astro.props;
+const categories = ["ai-news", "ai-film", "tech"] as const;
+const topPosts = categories
+  .map((cat) => posts.filter((p) => p.data.category === cat).sort((a, b) => a.data.rank - b.data.rank)[0])
+  .filter(Boolean);
+---
+
+<section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+  {topPosts.map((post) => (
+    <NewsCard post={post} featured={true} />
+  ))}
+</section>
